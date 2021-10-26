@@ -42,13 +42,13 @@ class CSVParser
 
   # Season is a enum field: 0 - summer, 1 - winter
   def enum_season(type)
-    season_types = {Summer: "0", Winter: "1"}
+    season_types = {Summer: 0, Winter: 1}
     season_types[type.intern]
   end
 
   # Medal is a enum field: 0 - N/A, 1 - Gold, 2 - Silver, 3 - Bronze
   def enum_medal(type)
-    medal_types = {NA: "0", Gold: "1", Silver: "2", Bronze: "3"}
+    medal_types = {NA: 0, Gold: 1, Silver: 2, Bronze: 3}
     medal_types[type.intern]
   end
 
@@ -74,11 +74,10 @@ class CSVParser
           row[12], # "Sport"
           row[13], # "Event"
           enum_medal(row[14]) # "Medal"
-
         ]
       end
     }
 
-    olympic[1..-1]
+    olympic
   end
 end
