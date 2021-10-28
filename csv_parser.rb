@@ -33,16 +33,6 @@ class CSVParser
     variable.sub(/-\d/, "").strip
   end
 
-  # Season is a enum field: 0 - summer, 1 - winter
-  # def enum_season(type)
-  #   SEASONE_TYPES[type.intern]
-  # end
-
-  # Medal is a enum field: 0 - N/A, 1 - Gold, 2 - Silver, 3 - Bronze
-  # def enum_medal(type)
-  #   MEDAL_TYPES[type.intern]
-  # end
-
   # read csv file
   def read_csv(games, sports, events, teams, athletes, results)
     CSV.parse(File.readlines(CSV_FILE).drop(1).join) { |row|
