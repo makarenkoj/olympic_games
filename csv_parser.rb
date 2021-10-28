@@ -1,11 +1,7 @@
-# frozen_string_literal: true
-
 require "csv"
 require "standard"
-require "sqlite3"
 
 class CSVParser
-  SQLITE_DB_FILE = "data/olympic_history.db"
   CSV_FILE = "data/athlete_events.csv"
 
   # remove any information in round brackets
@@ -53,31 +49,18 @@ class CSVParser
   end
 
   # read csv file
-  def read_csv(olympic)
-    CSV.foreach(CSV_FILE) { |row|
+  def read_csv(games, sports, events, teams, athletes, results)
+    CSV.parse(File.readlines(CSV_FILE).drop(1).join) { |row|
       if row[9] != "1906"
-        olympic << [
-          row[0], # id
-          delete_brackets(row[1]), # name
-          set_null(row[2]), # sex
-          calculate_of_birth(row[9], row[3]), # year_of_birth
-          # row[3], #age
-          params_json(row[4], row[5]), # params
-          # row[4] #"Height"
-          # row[5] #"Weight"
-          remove_dash_and_number(row[6]), # Team"
-          row[7], # "NOC"
-          row[8], # "Games"
-          row[9], # "Year"
-          enum_season(row[10]), # "Season"
-          row[11], # "City"
-          row[12], # "Sport"
-          row[13], # "Event"
-          enum_medal(row[14]) # "Medal"
-        ]
+        games[[row[9], enum_season(row[10])]] = [games.length + 1, row[11]] unless games.key?([row[9], enum_season(row[10])])
+        teams[row[7]] = [teams.length + 1, remove_dash_and_number(row[6])] unless teams.key?(row[7])
+        sports[row[12]] = [sports.length + 1] unless sports.key?(row[12])
+        events[row[13]] = [events.length + 1] unless events.key?(row[13])
+        athletes[row[0]] = [delete_brackets(row[1]), set_null(row[2]), calculate_of_birth(row[9], row[3]), params_json(row[4], row[5]), teams[row[7]][0]] unless athletes.key?(row[0])
+        results[results.length + 1] = [row[0].to_i, games[[row[9], enum_season(row[10])]][0], sports[row[12]][0], events[row[13]][0], enum_medal(row[14])]
       end
     }
 
-    olympic
+    p "end parsing #{Time.now.strftime("%k:%M:%S")}"
   end
 end
