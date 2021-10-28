@@ -1,3 +1,4 @@
 *.csv
 *.db
 .byebug_history
+Gemfile.lock

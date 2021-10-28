@@ -8,7 +8,7 @@ teams = {}
 athletes = {}
 results = {}
 
-p "start parsin #{Time.now.strftime("%k:%M:%S")}"
+p "start parsing #{Time.now.strftime("%k:%M:%S")}"
 
 parser = CSVParser.new
 parser.read_csv(games, sports, events, teams, athletes, results)

@@ -1,8 +1,9 @@
 require "csv"
-require "standard"
 
 class CSVParser
   CSV_FILE = "data/athlete_events.csv"
+  SEASONE_TYPES = {Summer: 0, Winter: 1}
+  MEDAL_TYPES = {NA: 0, Gold: 1, Silver: 2, Bronze: 3}
 
   # remove any information in round brackets
   def delete_brackets(variable)
@@ -19,11 +20,7 @@ class CSVParser
 
   # Year of birth
   def calculate_of_birth(year, age)
-    if year.to_s == "NA" || age.to_s == "NA"
-      "null"
-    else
-      year.to_i - age.to_i
-    end
+    year.to_s == "NA" || age.to_s == "NA" ? "null" : year.to_i - age.to_i
   end
 
   # If params is undefined - set null.
@@ -37,27 +34,52 @@ class CSVParser
   end
 
   # Season is a enum field: 0 - summer, 1 - winter
-  def enum_season(type)
-    season_types = {Summer: 0, Winter: 1}
-    season_types[type.intern]
-  end
+  # def enum_season(type)
+  #   SEASONE_TYPES[type.intern]
+  # end
 
   # Medal is a enum field: 0 - N/A, 1 - Gold, 2 - Silver, 3 - Bronze
-  def enum_medal(type)
-    medal_types = {NA: 0, Gold: 1, Silver: 2, Bronze: 3}
-    medal_types[type.intern]
-  end
+  # def enum_medal(type)
+  #   MEDAL_TYPES[type.intern]
+  # end
 
   # read csv file
   def read_csv(games, sports, events, teams, athletes, results)
     CSV.parse(File.readlines(CSV_FILE).drop(1).join) { |row|
       if row[9] != "1906"
-        games[[row[9], enum_season(row[10])]] = [games.length + 1, row[11]] unless games.key?([row[9], enum_season(row[10])])
-        teams[row[7]] = [teams.length + 1, remove_dash_and_number(row[6])] unless teams.key?(row[7])
-        sports[row[12]] = [sports.length + 1] unless sports.key?(row[12])
-        events[row[13]] = [events.length + 1] unless events.key?(row[13])
-        athletes[row[0]] = [delete_brackets(row[1]), set_null(row[2]), calculate_of_birth(row[9], row[3]), params_json(row[4], row[5]), teams[row[7]][0]] unless athletes.key?(row[0])
-        results[results.length + 1] = [row[0].to_i, games[[row[9], enum_season(row[10])]][0], sports[row[12]][0], events[row[13]][0], enum_medal(row[14])]
+        unless games.key?([row[9], SEASONE_TYPES[row[10].intern]])
+          games[[row[9], SEASONE_TYPES[row[10].intern]]] = [
+            games.length + 1, row[11]
+          ]
+        end
+
+        unless teams.key?(row[7])
+          teams[row[7]] = [
+            teams.length + 1, remove_dash_and_number(row[6])
+          ]
+        end
+
+        unless sports.key?(row[12])
+          sports[row[12]] = [
+            sports.length + 1
+          ]
+        end
+
+        unless events.key?(row[13])
+          events[row[13]] = [
+            events.length + 1
+          ]
+        end
+
+        unless athletes.key?(row[0])
+          athletes[row[0]] = [
+            delete_brackets(row[1]), set_null(row[2]), calculate_of_birth(row[9], row[3]), params_json(row[4], row[5]), teams[row[7]][0]
+          ]
+        end
+
+        results[results.length + 1] = [
+          row[0].to_i, games[[row[9], SEASONE_TYPES[row[10].intern]]][0], sports[row[12]][0], events[row[13]][0], MEDAL_TYPES[row[14].intern]
+        ]
       end
     }
 
