@@ -1,5 +1,5 @@
-require_relative "csv_parser"
-require_relative "import_db"
+require "./csv_parser.rb"
+require "./import_db.rb"
 
 games = {}
 sports = {}

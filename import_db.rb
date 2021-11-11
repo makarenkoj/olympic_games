@@ -1,5 +1,5 @@
 require "sqlite3"
-require_relative "constant.rb"
+require "./constant.rb"
 
 class ImportDataBase
 
