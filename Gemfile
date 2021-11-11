@@ -1,6 +1,9 @@
-source "https://rubygems.org"
-git_source(:github) { |repo| "https://github.com/#{repo}.git" }
+# frozen_string_literal: true
 
-require "standard"
-require "sqlite3"
-require "csv"
+source "https://rubygems.org"
+
+git_source(:github) {|repo_name| "https://github.com/#{repo_name}" }
+
+gem "standard"
+gem "sqlite3"
+gem "csv"

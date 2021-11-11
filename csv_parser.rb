@@ -1,9 +1,7 @@
 require "csv"
+require_relative "constant.rb"
 
 class CSVParser
-  CSV_FILE = "data/athlete_events.csv"
-  SEASONE_TYPES = {Summer: 0, Winter: 1}
-  MEDAL_TYPES = {NA: 0, Gold: 1, Silver: 2, Bronze: 3}
 
   # remove any information in round brackets
   def delete_brackets(variable)
@@ -37,8 +35,8 @@ class CSVParser
   def read_csv(games, sports, events, teams, athletes, results)
     CSV.parse(File.readlines(CSV_FILE).drop(1).join) { |row|
       if row[9] != "1906"
-        unless games.key?([row[9], SEASONE_TYPES[row[10].intern]])
-          games[[row[9], SEASONE_TYPES[row[10].intern]]] = [
+        unless games.key?([row[9], SEASONE_TYPES[row[10].capitalize.intern]])
+          games[[row[9], SEASONE_TYPES[row[10].capitalize.intern]]] = [
             games.length + 1, row[11]
           ]
         end
@@ -68,7 +66,7 @@ class CSVParser
         end
 
         results[results.length + 1] = [
-          row[0].to_i, games[[row[9], SEASONE_TYPES[row[10].intern]]][0], sports[row[12]][0], events[row[13]][0], MEDAL_TYPES[row[14].intern]
+          row[0].to_i, games[[row[9], SEASONE_TYPES[row[10].capitalize.intern]]][0], sports[row[12]][0], events[row[13]][0], MEDAL_TYPES[row[14].downcase.intern]
         ]
       end
     }
