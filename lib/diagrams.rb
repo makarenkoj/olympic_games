@@ -1,5 +1,5 @@
-require "./constant.rb"
-require "./data_base_connector.rb"
+require "./data/constant.rb"
+require "./lib/data_base_connector.rb"
 
 class Diagrams
   def initialize

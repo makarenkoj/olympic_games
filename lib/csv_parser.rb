@@ -1,5 +1,5 @@
 require "csv"
-require "./constant.rb"
+require "./data/constant.rb"
 
 class CSVParser
 
