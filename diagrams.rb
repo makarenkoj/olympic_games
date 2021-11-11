@@ -42,7 +42,6 @@ class Diagrams
   def print_amount_of_medals(medal, season, noc)
     result = amount_of_medals(medal, season, noc)
     puts "Year  Amount"
-    # result.each { |r| puts "#{r[0]} #{print_rectangle(r[1])}" if r[1] != 0 }
     result.each { |r| puts "#{r[0]} #{print_rectangle(r[1])}" }
   end
 
@@ -60,7 +59,13 @@ class Diagrams
 
     @input_hash[1] = 4 unless @input_hash.include?(1)
 
-    print_amount_of_medals(@input_hash[1], @input_hash[2], @input_hash[3])
+    if @input_hash[2].nil?
+      puts ERRORS[:season]
+    elsif @input_hash[3].nil?
+      puts ERRORS[:noc]
+    else
+      print_amount_of_medals(@input_hash[1], @input_hash[2], @input_hash[3])
+    end
   end
 
   # Params: season [winter|summer] year medal_type [gold|silver|bronze] (in any order).
@@ -112,7 +117,7 @@ class Diagrams
     @input_hash[2] = 0 unless @input_hash.include?(2)
     @input_hash[3] = 4 unless @input_hash.include?(3)
 
-    print_top_teams(@input_hash[1], @input_hash[2], @input_hash[3])
+    @input_hash[1].nil? ? puts(ERRORS[:season]) : print_top_teams(@input_hash[1], @input_hash[2], @input_hash[3])
   end
 
   def check_input(user_input_array)
