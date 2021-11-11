@@ -1,7 +1,5 @@
-require 'byebug' #don`t fogot delete it
-require "sqlite3"
-require_relative "constant.rb"
-require_relative "data_base_connector.rb"
+require_relative "constant"
+require_relative "data_base_connector"
 
 class Diagrams
   def initialize
@@ -11,19 +9,19 @@ class Diagrams
 
   def print_rectangle(params)
     rectangel = []
-    params.to_i.times { rectangel << '█' }
+    params.to_i.times { rectangel << "█" }
     rectangel.join
   end
 
   # Params: season [winter|summer] NOC medal_name [gold|silver|bronze] (in any order).
-  #use table teams(noc) teams.id, athletes(team_id) athletes.id, games(season) games.id, resilts(athletes.id, games.id) medal
-  #return year and amount medal: Year  Amount
+  # use table teams(noc) teams.id, athletes(team_id) athletes.id, games(season) games.id, resilts(athletes.id, games.id) medal
+  # return year and amount medal: Year  Amount
   #                              1896  █████
   #                              1900  ███
-  #                              1904  
+  #                              1904
   #                              1908  ████████
   def amount_of_medals(medal, season, noc)
-    medal == 4 ? medal = 'IN (1, 2, 3)' :  medal = "IN (#{medal})"
+    medal = medal == 4 ? "IN (1, 2, 3)" : "IN (#{medal})"
 
     @data_base.execute("SELECT DISTINCT year, COUNT(noc_name) medals from games
         LEFT JOIN (
@@ -43,19 +41,18 @@ class Diagrams
 
   def print_amount_of_medals(medal, season, noc)
     result = amount_of_medals(medal, season, noc)
-    puts 'Year  Amount'
+    puts "Year  Amount"
     # result.each { |r| puts "#{r[0]} #{print_rectangle(r[1])}" if r[1] != 0 }
     result.each { |r| puts "#{r[0]} #{print_rectangle(r[1])}" }
   end
 
-  #check the input if the amount of medals function is selected
+  # check the input if the amount of medals function is selected
   def medal_array(user_input_array)
     user_input_array.each { |a|
-      if MEDAL_TYPES[a.downcase.intern] != nil
-        p a
-        @input_hash[1] = "#{MEDAL_TYPES[a.downcase.intern]}"
-      elsif SEASONE_TYPES[a.capitalize.intern] != nil
-        @input_hash[2] = "#{SEASONE_TYPES[a.capitalize.intern]}"
+      if !MEDAL_TYPES[a.downcase.intern].nil?
+        @input_hash[1] = (MEDAL_TYPES[a.downcase.intern]).to_s
+      elsif !SEASONE_TYPES[a.capitalize.intern].nil?
+        @input_hash[2] = (SEASONE_TYPES[a.capitalize.intern]).to_s
       elsif a.size == 3
         @input_hash[3] = a.upcase
       end
@@ -75,8 +72,8 @@ class Diagrams
   # UGA   ██████████████████████████████
 
   def top_teams(season, year, medal_type)
-    medal_type == 4 ? medal = "IN (1, 2, 3)" : medal = "IN (#{medal_type})"
-    year == 0 ? condition = "" : condition = "year = #{year} AND "
+    medal = medal_type == 4 ? "IN (1, 2, 3)" : "IN (#{medal_type})"
+    condition = year == 0 ? "" : "year = #{year} AND "
 
     @data_base.execute("SELECT noc_name, COUNT(medal) medals
                   FROM results
@@ -89,31 +86,36 @@ class Diagrams
                   ORDER BY count(medal) DESC")
   end
 
+  # Show resulting chart only for those teams, that have more than average result:
+  # if average amount for all teams is 200 - show only teams with more than 200 medals.
   def print_top_teams(season, year, medal_type)
     teams = top_teams(season, year, medal_type)
+    summ_medals = teams.map { |t| t[1] }.sum
+    average_result = summ_medals / teams.count
+
     puts "NOC   Amount"
-    teams.each { |t| puts "#{t[0]}: #{print_rectangle(t[1])}" }
+    teams.each { |t| puts "#{t[0]}: #{print_rectangle(t[1])}" if t[1] >= average_result }
   end
 
-  #check the input if the top teams function is selected
+  # check the input if the top teams function is selected
   def top_team_array(user_input_array)
     user_input_array.each { |a|
-      if SEASONE_TYPES[a.capitalize.intern] != nil
-        @input_hash[1] = "#{SEASONE_TYPES[a.capitalize.intern]}"
+      if !SEASONE_TYPES[a.capitalize.intern].nil?
+        @input_hash[1] = (SEASONE_TYPES[a.capitalize.intern]).to_s
       elsif a.size == 4
         @input_hash[2] = a.to_i
-      elsif MEDAL_TYPES[a.downcase.intern] != nil
-        @input_hash[3] = "#{ MEDAL_TYPES[a.downcase.intern] }"
+      elsif !MEDAL_TYPES[a.downcase.intern].nil?
+        @input_hash[3] = (MEDAL_TYPES[a.downcase.intern]).to_s
       end
     }
 
     @input_hash[2] = 0 unless @input_hash.include?(2)
-    @input_hash[3] = 4 unless @input_hash.include?(3)  
+    @input_hash[3] = 4 unless @input_hash.include?(3)
 
     print_top_teams(@input_hash[1], @input_hash[2], @input_hash[3])
   end
 
   def check_input(user_input_array)
-    user_input_array[0] == 'medals' ? medal_array(user_input_array) : top_team_array(user_input_array)
+    user_input_array[0] == "medals" ? medal_array(user_input_array) : top_team_array(user_input_array)
   end
 end
