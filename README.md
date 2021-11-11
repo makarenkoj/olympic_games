@@ -25,15 +25,15 @@ Command examples:
 
   `ruby diagram_printer.rb medals summer ukr`
 
-  `medals silver UKR winter`
+  `ruby diagram_printer.rb medals silver UKR winter`
 
 * Shows the number of medals per team for a specific year, season, and medal type:
 
-  `top-teams summer 2004 silver`
+  `ruby diagram_printer.rb top-teams summer 2004 silver`
 
-  `op-teams silver winter`
+  `ruby diagram_printer.rb top-teams silver winter`
 
-  `top-teams winter`
+  `ruby diagram_printer.rb top-teams winter`
 
 Parameters that you may need:
 ----------------------------
@@ -57,3 +57,7 @@ Parameters that you may need:
   `ROU, RSA, RUS, RWA, SAA, SAM, SCG, SEN, SEY, SGP, SKN, SLE, SLO, SMR, SOL, SOM, SRB, SRI, SSD, STP, SUD,`
   `SUI, SUR, SVK, SWE, SWZ, SYR, TAN, TCH, TGA, THA, TJK, TKM, TLS, TOG, TPE, TTO, TUN, TUR, TUV, UAE, UAR,`
   `UGA, UKR, UNK, URS, URU, USA, UZB, VAN, VEN, VIE, VIN, VNM, WIF, YAR, YEM, YMD, YUG, ZAM, ZIM`
+
+* Medals:
+
+  `NA, Gold, Silver, Bronze`
