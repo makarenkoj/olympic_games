@@ -1,7 +1,7 @@
 require "sqlite3"
+require "./data/constant.rb"
 
 class ImportDataBase
-  DB_FILE = "data/olympic_history.db"
 
   # import data base
   def import_sql(games, sports, events, teams, athletes, results)
